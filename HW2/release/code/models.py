@@ -5,7 +5,7 @@ This file is where you will write most of your code!
 """
 
 import numpy as np
-
+import math
 
 class Model(object):
     """ Abstract model object.
@@ -59,7 +59,7 @@ class Perceptron(Model):
         super().__init__(nfeatures=nfeatures)
         self.W = np.zeros((nfeatures, 1))
 
-    def fit(self, *, X, y, lr):
+    def fit(self, X, y, lr=1.0, number_of_iterations=5, size=1):
         """ TODO: Implement this!
 
         Args:
@@ -68,7 +68,47 @@ class Perceptron(Model):
             y: A dense array of ints with shape [num_examples].
             lr: A float, the learning rate of this fit step.
         """
-        raise Exception("You must implement this method!")
+        self.num_input_features = X.shape[1]
+
+        # Initialize w to 0
+        w = np.zeros((np.size(X, 1), 1))
+        if size is None:
+            size = np.size(X, 0)
+
+        for idx in range(number_of_iterations):
+            k = int(math.ceil(np.size(X, 0) / size))
+            
+            for i in range(k - 1):
+                x_row = X[i * size:(i + 1) * size]
+                y_row = y[i * size:(i + 1) * size]
+                # print(x_row)
+                # print(y_row)
+                # print(w)
+
+                # Calculate (w dot xi)
+                y_hat = np.matmul(x_row, w)
+                # print('Dot Prod:', y_hat)
+
+                # Apply y^ = sign(w dot xi)
+                for idx in range(len(y_hat)):
+                    y_hat[idx] = 1 if y_hat[idx] >= 0 else -1
+                
+                # print('y_hat', y_hat)
+                # print('y_row', y_row)
+                
+                # If y^ != yi, make an update to w.
+                # w' = w + (lr * yi * xi) 
+                productxiyi = np.zeros((np.size(x_row, 1), 1))
+                if y_hat != y_row:
+                    productxiyi = x_row.T * y_row
+                    w = w + np.multiply(lr, productxiyi)
+
+        self.weights = w
+        print(self.weights)
+        print('------------------------------')
+
+        pass
+        # raise Exception("You must implement this method!")
 
     def predict(self, X):
         """ TODO: Implement this!

@@ -27,6 +27,11 @@ def get_args():
     parser.add_argument("--predictions-file", type=str, help="The predictions file to create. (Only used for testing.)")
 
     # TODO: Add optional command-line arguments as necessary (learning rate and training iterations).
+    parser.add_argument("--online-training-iterations", type=int,
+                        help="The number of training iterations.", default=5)
+
+    parser.add_argument("--online-learning-rate", type=float, help="The online learning rate.",
+                        default=1.0)
 
     args = parser.parse_args()
 
@@ -73,6 +78,13 @@ def train(args):
     # build the appropriate model
     if args.algorithm == "perceptron":
         model = models.Perceptron(nfeatures=X.shape[1])
+        X = X.todense()
+        y = y.reshape(len(y), 1)
+        
+        for i in range(len(y)):
+            if y[i] == 0:
+                y[i] = -1
+
     elif args.algorithm == "logistic":
         model = models.LogisticRegression(nfeatures=X.shape[1])
     else:
