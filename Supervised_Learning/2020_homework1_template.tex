@@ -1,0 +1,380 @@
+\documentclass[11pt]{article}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{url}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage{marvosym}
+\usepackage{enumerate}
+\usepackage{subfigure}
+\usepackage{tikz}
+\usepackage[fleqn]{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage[many]{tcolorbox}
+\usepackage{lipsum}
+\usepackage{float}
+\usepackage{trimclip}
+\usepackage{listings}
+\usepackage{environ}% http://ctan.org/pkg/environ
+\usepackage{wasysym}
+\usepackage{array}
+
+
+\oddsidemargin 0mm
+\evensidemargin 5mm
+\topmargin -20mm
+\textheight 240mm
+\textwidth 160mm
+
+\newcommand{\vwi}{{\bf w}_i}
+\newcommand{\vw}{{\bf w}}
+\newcommand{\vx}{{\bf x}}
+\newcommand{\vy}{{\bf y}}
+\newcommand{\vxi}{{\bf x}_i}
+\newcommand{\yi}{y_i}
+\newcommand{\vxj}{{\bf x}_j}
+\newcommand{\vxn}{{\bf x}_n}
+\newcommand{\yj}{y_j}
+\newcommand{\ai}{\alpha_i}
+\newcommand{\aj}{\alpha_j}
+\newcommand{\X}{{\bf X}}
+\newcommand{\Y}{{\bf Y}}
+\newcommand{\vz}{{\bf z}}
+\newcommand{\msigma}{{\bf \Sigma}}
+\newcommand{\vmu}{{\bf \mu}}
+\newcommand{\vmuk}{{\bf \mu}_k}
+\newcommand{\msigmak}{{\bf \Sigma}_k}
+\newcommand{\vmuj}{{\bf \mu}_j}
+\newcommand{\msigmaj}{{\bf \Sigma}_j}
+\newcommand{\pij}{\pi_j}
+\newcommand{\pik}{\pi_k}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\el}{\mathcal{L}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\vxij}{{\bf x}_{ij}}
+\newcommand{\vt}{{\bf t}}
+\newcommand{\yh}{\hat{y}}
+\newcommand{\code}[1]{{\footnotesize \tt #1}}
+\newcommand{\alphai}{\alpha_i}
+\newcommand{\defeq}{\overset{\text{def}}{=}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+
+
+\bgroup
+\def\arraystretch{1.5}
+\newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{z}[1]{>{\centering\arraybackslash}m{#1}}
+
+%Arguments are 1 - height, 2 - box title
+\newtcolorbox{textanswerbox}[2]{%
+ width=\textwidth,colback=white,colframe=blue!30!black,floatplacement=H,height=#1,title=#2,clip lower=true,before upper={\parindent0em}}
+
+ \newtcolorbox{eqanswerbox}[1]{%
+ width=#1,colback=white,colframe=black,floatplacement=H,height=3em,sharp corners=all,clip lower=true,before upper={\parindent0em}}
+
+ %Arguments are 1 - height, 2 - box title
+ \NewEnviron{answertext}[2]{
+        \noindent
+        \marginbox*{0pt 10pt}{
+        \clipbox{0pt 0pt 0pt 0pt}{
+        \begin{textanswerbox}{#1}{#2}
+        \BODY
+        \end{textanswerbox}
+        }
+        }
+}
+
+%Arguments are 1 - height, 2 - box title, 3 - column definition
+ \NewEnviron{answertable}[3]{
+        \noindent
+        \marginbox*{0pt 10pt}{
+        \clipbox{0pt 0pt 0pt 0pt}{
+        \begin{textanswerbox}{#1}{#2}
+                \vspace{-0.5cm}
+                        \begin{table}[H]
+                        \centering
+                        \begin{tabular}{#3}
+                                \BODY
+                        \end{tabular}
+                        \end{table}
+        \end{textanswerbox}
+        }
+        }
+}
+
+ %Arguments are 1 - height, 2 - box title, 3 - title, 4- equation label, 5 - equation box width
+ \NewEnviron{answerequation}[5]{
+        \noindent
+        \marginbox*{0pt 10pt}{
+        \clipbox{0pt 0pt 0pt 0pt}{
+        \begin{textanswerbox}{#1}{#2}
+                \vspace{-0.5cm}
+                        \begin{table}[H]
+                        \centering
+                \renewcommand{\arraystretch}{0.5}% Tighter
+
+                        \begin{tabular}{#3}
+                                #4 =	&
+                        \clipbox{0pt 0pt 0pt 0pt}{
+
+                        \begin{eqanswerbox}{#5}
+                                $\BODY$
+                        \end{eqanswerbox}
+                        } \\
+                        \end{tabular}
+                        \end{table}
+
+        \end{textanswerbox}
+        }
+        }
+}
+
+ %Arguments are 1 - height, 2 - box title
+ \NewEnviron{answerderivation}[2]{
+        \noindent
+        \marginbox*{0pt 10pt}{
+        \clipbox{0pt 0pt 0pt 0pt}{
+        \begin{textanswerbox}{#1}{#2}
+        \BODY
+        \end{textanswerbox}
+        }
+        }
+}
+
+\newcommand{\Checked}{{\LARGE \XBox}}%
+\newcommand{\Unchecked}{{\LARGE \Square}}%
+\newcommand{\TextRequired}{{\textbf{Place Answer Here}}}%
+\newcommand{\EquationRequired}{\textbf{Type Equation Here}}%
+
+
+\newcommand{\answertextheight}{5cm}
+\newcommand{\answertableheight}{4cm}
+\newcommand{\answerequationheight}{2.5cm}
+\newcommand{\answerderivationheight}{14cm}
+
+\newcounter{QuestionCounter}
+\newcounter{SubQuestionCounter}[QuestionCounter]
+\setcounter{SubQuestionCounter}{1}
+
+\newcommand{\subquestiontitle}{Question \theQuestionCounter.\theSubQuestionCounter~}
+\newcommand{\newquestion}{\stepcounter{QuestionCounter}\setcounter{SubQuestionCounter}{1}\newpage}
+\newcommand{\newsubquestion}{\stepcounter{SubQuestionCounter}}
+
+
+\lstset{language=[LaTeX]TeX,basicstyle=\ttfamily\bf}
+
+\pagestyle{myheadings}
+\markboth{Homework 1}{Fall 2020 CS 475/675 Machine Learning: Homework 1}
+
+\title{CS 475 Machine Learning: Homework 1\\
+Supervised Learning 1\\
+Analytical Questions\\
+\Large{Due: Thursday, September 24, 2020, 11:59 pm US/Eastern}\\
+30 Points Total \hspace{1cm} Version 1.0}
+\author{PARTNER1\_NAME (PARTNER1\_JHED), PARTER2\_NAME (PARTNER2\_JHED)}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{headings}
+
+
+\section*{Instructions }
+We have provided this \LaTeX{} document for turning in this homework. We give you one or more boxes to answer each question.  The question to answer for each box will be noted in the title of the box.\\
+
+{\bf Other than your name, do not type anything outside the boxes. Leave the rest of the document unchanged.}\\
+
+
+\textbf{Do not change any formatting in this document, or we may be unable to
+  grade your work. This includes, but is not limited to, the height of
+  textboxes, font sizes, and the spacing of text and tables.  Additionally, do
+  not add text outside of the answer boxes. Entering your answers are the only
+  changes allowed.}\\
+
+
+\textbf{We strongly recommend you review your answers in the generated PDF to
+  ensure they appear correct. We will grade what appears in the answer boxes in
+  the submitted PDF, NOT the original latex file.}
+
+\pagebreak
+
+\section*{ Notation}
+{
+\centering
+\smallskip\begin{tabular}{r l}
+\(\vec{x_i}\) & One input data vector. \(\vec{x_i}\) is \(M\) dimensional.
+\(\vec{x_i} \in \mathbb{R}^{1 \times M}\).  \\ &
+We assume $\vec{x_i}$ is augmented with a  $1$ to include a bias term. \\ \\
+\(\vec{X}\) & 	A matrix of concatenated \(\vec{x_i}\)'s. There are \(N\) input vectors, so \(\vec{X} \in \mathbb{R}^{N \times M}\) \\ \\
+\(y_i\) & The true label for input vector \(\vec{x_i}\). In regression problems, \(y_i\) is continuous. \\ & In general ,\(y_i\) can be a vector, but for now we assume it's a scalar: \(y_i \in \mathbb{R}^1\). \\ \\
+
+\(\vec{y}\) & 	A vector of concatenated \(y_i\)'s. There are \(N\) input vectors, so \(\vec{y} \in \mathbb{R}^{N \times 1}\) \\ \\
+
+\(\vec{w}\) & A weight vector. We are trying to learn the elements of \(\vec{w}\). \\
+& \(\vec{w}\) is the same number of elements as \(\vec{x_i}\) because we will end up computing \\
+& the dot product \(\vec{x_i} \cdot \vec{w}\). \\
+& \(\vec{w} \in \mathbb{R}^{M \times 1}\). We assume the bias term is included in \(\vec{w}\). \\ \\
+
+\(h(\vec(x))\) & The true regression function that describes the data. \\ \\
+ 
+i.i.d. & Independently and identically distributed. \\ \\
+
+Bias-variance  & We can write \(E_D[(f(x, D) - h(x))^2]\) = \\
+decomposition  & \((E_D[f(x, D) - h(x))^2 + E_D[(f(x, D) - E_D[f(x, D)])^2]\) \\
+                            & where the first term is the bias squared, and the second term is the variance.\\ \\
+
+ Notes: & In general, a lowercase letter (not boldface), $a$, indicates a scalar. \\
+  & A boldface lowercase letter, $\vec{a}$, indicates a vector. \\  &  A boldface uppercase letter, $\vec{A}$, indicates a matrix. \\
+\end{tabular}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newquestion
+\section*{\arabic{QuestionCounter}) Methods of Estimation (10 points)}
+
+ In class, we discussed estimating the parameters of a Gaussian Linear regression using Maximum Likelihood Estimations and showed its equivalence with Ordinary Least Squares.
+ 
+
+\begin{enumerate}[{(1)}]
+
+\item (2 points) Consider the following situation, where $F$ is some distribution:
+ \begin{align*}
+     X_i &\stackrel{i.i.d}{\sim} F\\
+     \epsilon_i &\stackrel{i.i.d}{\sim} \mathcal{N}(0, \sigma^2)\\
+     Y_i &= X_i^Tw + \epsilon_i
+ \end{align*}
+ 
+ Assuming $\sigma^2$ is known, what is the Maximum Likelihood Estimate (MLE) of $w$ in this situation? How does our MLE estimate of $w$ change if we instead assume ${\bf X}$ is a fixed (non-random) matrix?
+
+\begin{answertext}{9cm}{}
+
+
+  
+\end{answertext} 
+
+\item (3 points) Instead, consider the following case: \textbf{X} is a fixed matrix, $w$ is a d-dimensional vector.
+\begin{align*}
+    w &\sim \mathcal{N}(0, \lambda^2I_d)\\
+    \epsilon_i &\stackrel{i.i.d}{\sim} \mathcal{N}(0, \sigma^2)\\
+    Y_i &= X_i^Tw + \epsilon_i
+\end{align*}
+
+Write out the form of the distribution of $\log p(w \mid Y_i)$ for $n$ i.i.d samples. What expression for $w$ do you get if you maximize this quantity instead of maximising the likelihood? What kind of regularization is being applied here? Write out the regularization penalty in terms of $\lambda$.
+
+
+\begin{answertext}{10cm}{}
+    
+  
+  
+\end{answertext} 
+
+
+\newsubquestion
+\item (3 points) Now, repeat the same steps as above, but under the following assumption:
+\begin{align*}
+    w_i \stackrel{i.i.d}{\sim} Laplace(0, \lambda)
+\end{align*}
+
+What kind of regularization is being applied here? Write out the regularization penalty in terms of $\lambda$.
+
+\begin{answertext}{9cm}{}
+
+\end{answertext}
+
+\item (2 points) Suppose you are given a training set and a held out set, and you train a Linear Regression model with L2 regularization on the training set. You try many different values for the regularization penalty $\lambda$, and you choose the $\lambda$ that gives you the best Mean Squared Error (MSE) on a held-out validation set. Now, suppose you are given a new held-out test set. How do you expect your trained model's MSE on this new test set to compare to (a) the model's MSE on your training set? (b) the model's MSE on your validation set? Why?
+
+\begin{answertext}{8cm}{}
+  
+\end{answertext}
+
+\newquestion
+\section*{\arabic{QuestionCounter}) Bias Variance Trade-off and Regularization (10 points)}
+
+In class, we discussed hypothesis classes, the bias variance trade-off, and regularization. Now, we will explore the bias variance trade-off and its interaction with regularization.
+
+Consider the Gaussian Linear Regression model discussed in class:
+\begin{align*}
+    \epsilon_i &\stackrel{i.i.d}{\sim} \mathcal{N}(0, \sigma^2)\\
+    Y_i &= w_0 + w_1X_i + \epsilon_i\\
+\end{align*}
+
+Suppose the variance $\sigma^2$ is known and $\textbf{X}$ is fixed (non-random). 
+
+Based on some domain knowledge, you believe that a simple hypothesis might work well to model this data, and you decide to specify your hypothesis class as zero-order polynomials. 
+
+Explicitly, you fit a zero order polynomial to the data $f(X) = \hat{w_0}$. 
+
+\item (3 points) Derive the maximum likelihood estimate for $\hat{w_0}$
+
+\begin{answertext}{6cm}{}
+    
+\end{answertext} 
+
+\item (4 points) Compute the bias and the variance of the maximum likelihood estimate of $\hat{w_0}$
+
+\begin{answertext}{6cm}{}
+    
+\end{answertext} 
+
+\item (3 points) For a new observation $(X^*, Y^*)$, you use the estimate for $\hat{w_0}$ to predict $Y^*$. Given that you're not using $w_1$, write out the bias-variance decomposition for the expected value of the mean square error.
+
+\begin{answertext}{6cm}{}
+    
+\end{answertext} 
+
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newquestion
+\section*{\arabic{QuestionCounter}) Combining Multiple Regressions (10 points)}
+
+Suppose you are given the following data, where $F$ is some distribution:
+
+\begin{align*}
+    \epsilon_i &\stackrel{i.i.d}{\sim} F\\
+    Y_i &= X_i^Tw + \epsilon_i
+\end{align*}
+
+Assume $X$ is a fixed matrix. 
+Now instead of training one regression, you randomly split the data into two independent subsets $D_1 = Y_1, \dots Y_{n/2}$ and $D_2 = Y_{n/2 +1} \dots Y_n$. You then train a regression model on $D_1$ to learn $w^{(1)}$, and an independent model on $D_2$ to learn $w^{(2)}$.
+
+The prediction function now looks like:
+\begin{align*}
+    {f(X_i)} = \frac{1}{2}{f^{(1)}(X_i; w^{(1)})} + \frac{1}{2}{f^{(2)}(X_i; w^{(2)})}
+\end{align*}
+
+Now, given a new point $(X^*, Y^*)$, you want to evaluate the Mean Squared Error:
+\begin{align*}
+    \mathbb{E}[(Y^* - {f(X^*)})^2]
+\end{align*}
+\begin{enumerate}[{(1)}]
+
+\item (5 points) Write out the bias-variance decomposition for the MSE:
+
+\begin{answertext}{6cm}{}
+    
+  
+  
+\end{answertext} 
+
+\item (3 points) Assuming the combined regression function $f$ is unbiased, compare the variance of $f$ with the variance of a linear regression model trained on the entire dataset $D$. 
+
+\begin{answertext}{6cm}{}
+    
+  
+  
+\end{answertext} 
+\item (2 points) Based on your response to the question above, what are the advantages and disadvantages of combining two independent regressions?
+
+\begin{answertext}{6cm}{}
+    
+  
+  
+\end{answertext} 
+\end{enumerate}
+
+\end{document}
